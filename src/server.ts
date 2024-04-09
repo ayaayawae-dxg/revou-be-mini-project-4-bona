@@ -1,9 +1,11 @@
 import "dotenv/config";
 import express from "express";
+import { RowDataPacket } from "mysql2";
 
 import routes from "./routes";
 import log from "./middleware/log";
 import { errorRes } from "./common/response";
+import pool from "./config/db";
 import config from "./config/config";
 
 const app = express();
@@ -15,8 +17,17 @@ app.use("/", routes);
 
 app.use(errorRes);
 
-const start = () => {
+const checkDb = async () => {
+  const [rows, fields] = await pool.query<RowDataPacket[]>('select @@version'); 
+  if (rows.length > 0) {
+    console.log(`Database connected successfully`);
+  }
+}
+
+const start = async () => {
   try {
+    await checkDb()
+
     app.listen(config.port as number, config.host, () => {
       console.log(`Server is running on ${config.host}:${config.port}`);
     });
