@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+
 import { successRes } from "../../common/response";
 import pool from "../../config/db";
 import { createNextError } from "../../common/createError";
