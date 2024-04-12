@@ -12,7 +12,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     await connection.beginTransaction();
 
     const createUserRequest = req.body as CreateUserRequest;
-    const createUserResponse = await authService.register(createUserRequest);
+    const createUserResponse = await authService.register(connection, createUserRequest);
 
     await successRes(connection, res, {
       message: "User registered successfully",
