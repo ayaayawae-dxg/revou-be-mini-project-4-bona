@@ -24,7 +24,24 @@ const createUser = async (connection: PoolConnection, userModel: UserModel) => {
   }
 };
 
+const getUserByUsername = async (connection: PoolConnection, username: string): Promise<UserModel> => {
+  const query = `SELECT id, fullname, username, role, password FROM users WHERE username = "${username}"`;
+  const [rows] = await connection.query<RowDataPacket[]>(query);
+  if (rows.length === 0) {
+    createError({ message: "Failed to get user", status: 200 });
+  }
+
+  return {
+    id: rows[0].id,
+    username: rows[0].username,
+    password: rows[0].password,
+    role: rows[0].role,
+    fullname: rows[0].fullname,
+  }
+};
+
 export default {
   checkUsername,
   createUser,
+  getUserByUsername,
 };
