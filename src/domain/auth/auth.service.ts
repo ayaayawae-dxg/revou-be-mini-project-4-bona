@@ -1,11 +1,11 @@
 import { hash } from "bcrypt";
 import { sign } from "jsonwebtoken";
 
-import { CreateUserRequest } from "./auth.model";
+import { CreateUserRequest, CreateUserResponse } from "./auth.model";
 import authRepository from "./auth.repository";
 import config from "../../config/config";
 
-const register = async (createUserRequest: CreateUserRequest) => {
+const register = async (createUserRequest: CreateUserRequest): Promise<CreateUserResponse> => {
   const { fullname, password, username, role } = createUserRequest;
 
   await authRepository.checkUsername(username);
@@ -25,7 +25,7 @@ const register = async (createUserRequest: CreateUserRequest) => {
     { expiresIn: "1h" }
   );
 
-  return jwtToken;
+  return { token: jwtToken };
 };
 
 export default {

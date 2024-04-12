@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 
+import pool from "../../config/db";
 import { successRes } from "../../common/response";
+import { createNextError } from "../../common/createError";
 import { CreateUserRequest } from "./auth.model";
 import authService from "./auth.service";
-import pool from "../../config/db";
-import { createNextError } from "../../common/createError";
 
 const register = async (req: Request, res: Response, next: NextFunction) => {
   const connection = await pool.getConnection();
