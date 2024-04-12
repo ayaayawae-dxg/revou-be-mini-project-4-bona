@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { PoolConnection } from "mysql2/promise";
 
 interface ErrorStatus extends Error {
   status: number;
@@ -10,7 +11,7 @@ interface SuccessDataProp {
   data?: undefined | any;
 }
 
-export const errorRes = (
+export const errorRes = async (
   err: ErrorStatus,
   req: Request,
   res: Response,
@@ -21,19 +22,22 @@ export const errorRes = (
   const errStack = err.stack;
 
   console.error(errStack);
-  res.status(status).send({
+  res.status(status).json({
     success: false,
     status: status,
     message: message,
   });
 };
 
-export const successRes = (res: Response, data: SuccessDataProp) => {
+export const successRes = async (connection: PoolConnection, res: Response, data: SuccessDataProp) => {
   const status = data.status || 200;
   const message = data.message || "Success";
   const payload = data.data || undefined;
 
-  res.status(status).send({
+  await connection.commit();
+  connection.release()
+
+  res.status(status).json({
     success: true,
     status: status,
     message: message,
