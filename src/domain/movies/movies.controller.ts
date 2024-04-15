@@ -4,7 +4,7 @@ import pool from "../../config/db";
 import { successRes } from "../../common/response";
 import { createNextError } from "../../common/createError";
 
-import { GetMoviesRequest } from "./movies.model";
+import { GetMoviesByIdRequest, GetMoviesRequest } from "./movies.model";
 import moviesService from "./movies.service";
 
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
@@ -25,6 +25,25 @@ const getAll = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getById = async (req: Request, res: Response, next: NextFunction) => {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    const getMoviesByIdRequest = req.params as unknown as GetMoviesByIdRequest;
+    const getMoviesByIdResponse = await moviesService.getById(connection, getMoviesByIdRequest);
+
+    await successRes(connection, res, {
+      message: "Movies detail fetched successfully",
+      status: 200,
+      data: getMoviesByIdResponse,
+    });
+  } catch (error) {
+    await createNextError(connection, () => next(error))
+  }
+};
+
 export default {
-  getAll
+  getAll,
+  getById
 };

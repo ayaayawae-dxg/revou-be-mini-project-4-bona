@@ -4,8 +4,11 @@ import config from "../../config/config";
 import { createError } from "../../common/createError";
 
 import {
+  GetMoviesByIdRequest,
+  GetMoviesByIdResponse,
   GetMoviesRequest,
   GetMoviesResponse,
+  MoviesByIdRawModel,
   MoviesRawModel,
 } from "./movies.model";
 import moviesRepository from "./movies.repository";
@@ -20,6 +23,45 @@ const get = async (
 
   const restructureData = (movies: MoviesRawModel[]): GetMoviesResponse[] => {
     const groupedMovies: { [key: number]: GetMoviesResponse } = {};
+
+    movies.forEach((movie) => {
+      const { id, title, duration, genre, show_time } = movie;
+
+      if (!groupedMovies[id]) {
+        groupedMovies[id] = {
+          id,
+          title,
+          duration,
+          show_time: [],
+          genre: [],
+        };
+      }
+
+      if (!groupedMovies[id].show_time.includes(show_time)) {
+        groupedMovies[id].show_time.push(show_time);
+      }
+
+      if (!groupedMovies[id].genre.includes(genre)) {
+        groupedMovies[id].genre.push(genre);
+      }
+    });
+
+    return Object.values(groupedMovies);
+  };
+
+  return restructureData(moviesData);
+};
+
+const getById = async (
+  connection: PoolConnection,
+  getMoviesByIdRequest: GetMoviesByIdRequest
+): Promise<GetMoviesByIdResponse[]> => {
+  const { movieId } = getMoviesByIdRequest;
+
+  const moviesData = await moviesRepository.getDetail(connection, movieId);
+
+  const restructureData = (movies: MoviesByIdRawModel[]): GetMoviesByIdResponse[] => {
+    const groupedMovies: { [key: number]: GetMoviesByIdResponse } = {};
 
     movies.forEach((movie) => {
       const { id, title, rating, duration, synopsis, show_time, director, genre, actor, as_character } = movie;
@@ -63,4 +105,5 @@ const get = async (
 
 export default {
   get,
+  getById,
 };
