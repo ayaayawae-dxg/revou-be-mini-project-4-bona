@@ -14,9 +14,9 @@ const checkUsername = async (connection: PoolConnection, username: string) => {
 };
 
 const createUser = async (connection: PoolConnection, userModel: UserModel) => {
-  const { username, password, fullname } = userModel;
+  const { username, password, fullname, role } = userModel;
 
-  const query = `INSERT INTO users (username, password, fullname) VALUES ("${username}", "${password}", "${fullname}")`;
+  const query = `INSERT INTO users (username, password, fullname, role) VALUES ("${username}", "${password}", "${fullname}", "${role}")`;
   const [rows] = await connection.query<ResultSetHeader>(query);
 
   if (rows.affectedRows === 0) {
