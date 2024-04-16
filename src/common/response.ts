@@ -21,7 +21,10 @@ export const errorRes = async (
   const message = err.message || "Something went wrong";
   const errStack = err.stack;
 
-  console.error(errStack);
+  if (status >= 500) {
+    console.error(errStack);
+  }
+  
   res.status(status).json({
     success: false,
     status: status,
