@@ -30,3 +30,27 @@ export interface CreateOrderModel {
   user_id: number;
   seat_id: number[];
 }
+
+export interface GetOrderHistoryRawModel {
+  id: string;
+  status: string;
+  seat_id: string;
+  seat: string;
+  show_time: string;
+  title: string;
+}
+
+export interface GetOrderHistoryRequest {
+  user_id: number;
+}
+
+export interface GetOrderHistoryResponse {
+  id: string;
+  status: string;
+  seat: {
+    id: number,
+    seat: string;
+  }[];
+  show_time: string;
+  title: string;
+}

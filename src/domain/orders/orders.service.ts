@@ -7,6 +7,9 @@ import {
   CreateOrderModel,
   CreateOrderRequest,
   CreateOrderResponse,
+  GetOrderHistoryRawModel,
+  GetOrderHistoryRequest,
+  GetOrderHistoryResponse,
 } from "./orders.model";
 import ordersRepository from "./orders.repository";
 import screeningRepository from "../screening/screening.repository";
@@ -22,12 +25,21 @@ const create = async (
     show_time,
   });
   if (!screening_id) {
-    createError({ message: "No screening time for the selected movie", status: 200 })
+    createError({
+      message: "No screening time for the selected movie",
+      status: 200,
+    });
   }
 
-  const isSeatAvailable = await screeningRepository.checkSeat(connection, { screening_id, seat_id })
+  const isSeatAvailable = await screeningRepository.checkSeat(connection, {
+    screening_id,
+    seat_id,
+  });
   if (!isSeatAvailable) {
-    createError({ message: "Seat is already filled. Please choose another seat.", status: 200 })
+    createError({
+      message: "Seat is already filled. Please choose another seat.",
+      status: 200,
+    });
   }
 
   const createOrderModel: CreateOrderModel = {
@@ -41,6 +53,41 @@ const create = async (
   return orderId;
 };
 
+const getOrderHistory = async (
+  connection: PoolConnection,
+  getOrderHistoryRequest: GetOrderHistoryRequest
+): Promise<GetOrderHistoryResponse[]> => {
+  const { user_id } = getOrderHistoryRequest;
+
+  const orderHistoryData = await ordersRepository.getOrderHistory(
+    connection,
+    user_id
+  );
+
+  const restructureData = (
+    orderHistory: GetOrderHistoryRawModel[]
+  ): GetOrderHistoryResponse[] => {
+    const temp: GetOrderHistoryResponse[] = orderHistory.map((order) => {
+      const seatId = order.seat_id.split(",");
+      const seat = order.seat.split(",");
+      const groupedSeat = seatId.map((id, idx) => ({ id: parseInt(id), seat: seat[idx] }));
+
+      return {
+        id: order.id,
+        seat: groupedSeat,
+        show_time: order.show_time,
+        status: order.status,
+        title: order.title
+      };
+    });
+
+    return temp;
+  };
+
+  return restructureData(orderHistoryData);
+};
+
 export default {
   create,
+  getOrderHistory,
 };

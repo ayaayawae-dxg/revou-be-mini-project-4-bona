@@ -64,7 +64,7 @@ const getDetail = async (connection: PoolConnection, moviesId: number): Promise<
     genre: row.genre
   }))
 
-  return movies
+  return movies 
 };
 
 export default {
