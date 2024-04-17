@@ -2,7 +2,7 @@ import { QueryResult, ResultSetHeader, RowDataPacket } from "mysql2";
 import { PoolConnection } from "mysql2/promise";
 
 import { createError } from "../../common/createError";
-import { MoviesByIdRawModel, MoviesRawModel } from "../movies/movies.model";
+import { CreateMovieRequest, CreateMovieResponse, MoviesByIdRawModel, MoviesModel, MoviesRawModel } from "../movies/movies.model";
 
 const get = async (connection: PoolConnection): Promise<MoviesRawModel[]> => {
   const query = `
@@ -64,10 +64,29 @@ const getDetail = async (connection: PoolConnection, moviesId: number): Promise<
     genre: row.genre
   }))
 
-  return movies 
+  return movies
+};
+
+const create = async (connection: PoolConnection, createMovie: CreateMovieRequest): Promise<CreateMovieResponse> => {
+  const query = `
+    INSERT INTO movies (title, rating, duration, synopsis) 
+    VALUES ("${createMovie.title}", "${createMovie.rating}", ${createMovie.duration}, "${createMovie.synopsis}");
+  `;
+  const [rows] = await connection.query<ResultSetHeader>(query);
+
+  return { id: rows.insertId };
+};
+
+const checkDuplicateTitle = async (connection: PoolConnection, title: string): Promise<Boolean> => {
+  const [rows] = await connection.query<RowDataPacket[]>(
+    `SELECT title FROM movies WHERE title = "${title}"`
+  );
+  return rows.length > 0 ? true : false
 };
 
 export default {
   get,
-  getDetail
+  getDetail,
+  create,
+  checkDuplicateTitle
 };

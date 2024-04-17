@@ -45,3 +45,14 @@ export interface GetMoviesByIdResponse extends MoviesByIdModel {
   genre: string[];
   show_time: string[];
 }
+
+export interface CreateMovieResponse {
+  id: number;
+}
+
+export interface CreateMovieRequest {
+  title: string;
+  rating: string;
+  duration: number;
+  synopsis: string;
+}

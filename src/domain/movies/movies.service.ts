@@ -4,6 +4,8 @@ import config from "../../config/config";
 import { createError } from "../../common/createError";
 
 import {
+  CreateMovieRequest,
+  CreateMovieResponse,
   GetMoviesByIdRequest,
   GetMoviesByIdResponse,
   GetMoviesRequest,
@@ -103,7 +105,27 @@ const getById = async (
   return restructureData(moviesData);
 };
 
+const create = async (
+  connection: PoolConnection,
+  createMovieRequest: CreateMovieRequest
+): Promise<CreateMovieResponse> => {
+  const { duration, rating, synopsis, title } = createMovieRequest;
+
+  const isTitleDuplicate = await moviesRepository.checkDuplicateTitle(connection, title);
+  if (isTitleDuplicate) {
+    createError({
+      message: "Movies with same title already registered.",
+      status: 200,
+    });
+  }
+
+  const createMovie = await moviesRepository.create(connection, createMovieRequest);
+
+  return createMovie;
+};
+
 export default {
   get,
   getById,
+  create
 };

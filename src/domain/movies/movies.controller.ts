@@ -4,7 +4,7 @@ import pool from "../../config/db";
 import { successRes } from "../../common/response";
 import { createNextError } from "../../common/createError";
 
-import { GetMoviesByIdRequest, GetMoviesRequest } from "./movies.model";
+import { CreateMovieRequest, GetMoviesByIdRequest, GetMoviesRequest } from "./movies.model";
 import moviesService from "./movies.service";
 
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
@@ -43,7 +43,26 @@ const getById = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const create = async (req: Request, res: Response, next: NextFunction) => {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    const createMovieRequest = req.body as CreateMovieRequest;
+    const createMovieResponse = await moviesService.create(connection, createMovieRequest);
+
+    await successRes(connection, res, {
+      message: "Movies created successfully",
+      status: 201,
+      data: createMovieResponse,
+    });
+  } catch (error) {
+    await createNextError(connection, () => next(error));
+  }
+}
+
 export default {
   getAll,
-  getById
+  getById,
+  create
 };
