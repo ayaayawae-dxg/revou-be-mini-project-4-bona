@@ -55,4 +55,7 @@ export interface CreateMovieRequest {
   rating: string;
   duration: number;
   synopsis: string;
+  director: string[];
+  cast: MoviesCastModel[];
+  genre: string[];
 }

@@ -109,7 +109,7 @@ const create = async (
   connection: PoolConnection,
   createMovieRequest: CreateMovieRequest
 ): Promise<CreateMovieResponse> => {
-  const { duration, rating, synopsis, title } = createMovieRequest;
+  const { title } = createMovieRequest;
 
   const isTitleDuplicate = await moviesRepository.checkDuplicateTitle(connection, title);
   if (isTitleDuplicate) {

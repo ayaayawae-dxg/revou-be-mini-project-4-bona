@@ -73,8 +73,29 @@ const create = async (connection: PoolConnection, createMovie: CreateMovieReques
     VALUES ("${createMovie.title}", "${createMovie.rating}", ${createMovie.duration}, "${createMovie.synopsis}");
   `;
   const [rows] = await connection.query<ResultSetHeader>(query);
+  const insertedId = rows.insertId
 
-  return { id: rows.insertId };
+  if (rows.affectedRows > 0) {
+    const queryCreateDirector = `INSERT INTO movies_director_map (movie_id, director) VALUES ?`;
+    const valueCreateDirector = createMovie.director.map((director) => {
+      return [insertedId, director];
+    });
+    await connection.query<ResultSetHeader>(queryCreateDirector, [valueCreateDirector]);
+
+    const queryCreateCast = `INSERT INTO movies_cast_map (movie_id, actor, as_character) VALUES ?`;
+    const valueCreateCast = createMovie.cast.map((cast) => {
+      return [insertedId, cast.actor, cast.as_character];
+    });
+    await connection.query<ResultSetHeader>(queryCreateCast, [valueCreateCast]);
+
+    const queryCreateGenre = `INSERT INTO movies_genre_map (movie_id, genre) VALUES ?`;
+    const valueCreateGenre = createMovie.genre.map((genre) => {
+      return [insertedId, genre];
+    });
+    await connection.query<ResultSetHeader>(queryCreateGenre, [valueCreateGenre]);
+  }
+
+  return { id: insertedId };
 };
 
 const checkDuplicateTitle = async (connection: PoolConnection, title: string): Promise<Boolean> => {
