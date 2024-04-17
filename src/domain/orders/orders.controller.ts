@@ -12,11 +12,11 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
     await connection.beginTransaction();
 
-    const createOrderRequest = req.body as CreateOrderRequest;
-    const createOrderResponse = await ordersService.create(connection, {
-      ...createOrderRequest,
-      user_id: req.app.locals.user_id,
-    });
+    const createOrderRequest = {
+      ...req.body,
+      user_id: req.app.locals.user.id,
+    } as CreateOrderRequest;
+    const createOrderResponse = await ordersService.create(connection, createOrderRequest);
 
     await successRes(connection, res, {
       message: "Orders created successfully",

@@ -33,8 +33,7 @@ const create = async (
   const createOrderModel: CreateOrderModel = {
     screening_id: screening_id,
     seat_id: seat_id,
-    // user_id: user_id,
-    user_id: 1,
+    user_id: user_id,
   };
 
   const orderId = await ordersRepository.create(connection, createOrderModel);

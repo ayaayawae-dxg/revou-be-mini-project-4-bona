@@ -53,6 +53,7 @@ const login = async (
 
   const jwtToken = sign(
     {
+      id: userData.id,
       fullname: userData.fullname,
       username: userData.username,
       role: userData.role,
