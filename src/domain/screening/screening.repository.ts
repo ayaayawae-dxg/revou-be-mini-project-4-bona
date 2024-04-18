@@ -2,7 +2,8 @@ import { QueryResult, ResultSetHeader, RowDataPacket } from "mysql2";
 import { PoolConnection } from "mysql2/promise";
 
 import { createError } from "../../common/createError";
-import { CheckSeatModel, GetIdByMovieAndTimeModel } from "./screening.model";
+import { CheckSeatModel, CreateScreeningRequest, CreateScreeningResponse, GetIdByMovieAndTimeModel } from "./screening.model";
+import { randomUUID } from "crypto";
 
 const getByMovieAndTime = async (connection: PoolConnection, { movie_id, show_time }: GetIdByMovieAndTimeModel): Promise<string> => {
   const queryCreateOrders = `
@@ -29,7 +30,20 @@ const checkSeat = async (connection: PoolConnection, { screening_id, seat_id }: 
   return rows.length > 0 ? false : true;
 };
 
+const create = async (connection: PoolConnection, createScreeningRequest: CreateScreeningRequest): Promise<void> => {
+  const { movie_id, show_time, theatre_id } = createScreeningRequest
+  const query = `
+    INSERT INTO screening (id, movie_id, theatre_id, show_time) VALUES ?
+  `;
+  const values = show_time.map((showtime => {
+    const id = randomUUID();
+    return [id, movie_id, theatre_id, showtime]
+  }))
+  const [rows] = await connection.query<ResultSetHeader>(query, [values]);
+};
+
 export default {
   getByMovieAndTime,
-  checkSeat
+  checkSeat,
+  create
 };
