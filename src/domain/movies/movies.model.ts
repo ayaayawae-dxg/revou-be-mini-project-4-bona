@@ -72,3 +72,7 @@ export interface CheckUpdateDuplicateTitleModel {
   title: string;
   id: number;
 }
+
+export interface DeleteMovieRequest {
+  movieId: number;
+}

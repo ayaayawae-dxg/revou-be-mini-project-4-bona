@@ -154,11 +154,22 @@ const update = async (connection: PoolConnection, updateMovie: UpdateMovieReques
   return { id: updateMovie.id };
 };
 
+const remove = async (connection: PoolConnection, movie_id: number): Promise<void> => {
+  const query = `
+    UPDATE movies 
+    SET
+      is_active = "N"
+    WHERE id = ${movie_id};
+  `;
+  await connection.query<ResultSetHeader>(query);
+};
+
 export default {
   get,
   getDetail,
   create,
   checkDuplicateTitle,
   checkUpdateDuplicateTitle,
-  update
+  update,
+  remove
 };

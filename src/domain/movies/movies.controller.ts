@@ -4,7 +4,7 @@ import pool from "../../config/db";
 import { successRes } from "../../common/response";
 import { createNextError } from "../../common/createError";
 
-import { CreateMovieRequest, GetMoviesByIdRequest, GetMoviesRequest, UpdateMovieRequest } from "./movies.model";
+import { CreateMovieRequest, DeleteMovieRequest, GetMoviesByIdRequest, GetMoviesRequest, UpdateMovieRequest } from "./movies.model";
 import moviesService from "./movies.service";
 
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
@@ -79,9 +79,27 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
+const remove = async (req: Request, res: Response, next: NextFunction) => {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    const deleteMovieRequest = req.params as unknown as DeleteMovieRequest;
+    await moviesService.remove(connection, deleteMovieRequest);
+
+    await successRes(connection, res, {
+      message: "Movies deleted successfully",
+      status: 200,
+    });
+  } catch (error) {
+    await createNextError(connection, () => next(error));
+  }
+}
+
 export default {
   getAll,
   getById,
   create,
-  update
+  update,
+  remove
 };

@@ -10,6 +10,6 @@ router.get("/", moviesController.getAll);
 router.get("/:movieId", moviesController.getById);
 router.post("/", auth, admin, moviesController.create);
 router.put("/:movieId", moviesController.update);
-router.delete("/", moviesController.getById);
+router.delete("/:movieId", moviesController.remove);
 
 export default router;

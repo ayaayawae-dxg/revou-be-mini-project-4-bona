@@ -6,6 +6,7 @@ import { createError } from "../../common/createError";
 import {
   CreateMovieRequest,
   CreateMovieResponse,
+  DeleteMovieRequest,
   GetMoviesByIdRequest,
   GetMoviesByIdResponse,
   GetMoviesRequest,
@@ -145,9 +146,19 @@ const update = async (
   return updateMovie;
 };
 
+const remove = async (
+  connection: PoolConnection,
+  deleteMovieRequest: DeleteMovieRequest
+): Promise<void> => {
+  const { movieId } = deleteMovieRequest;
+
+  await moviesRepository.remove(connection, movieId);
+};
+
 export default {
   get,
   getById,
   create,
-  update
+  update,
+  remove
 };
