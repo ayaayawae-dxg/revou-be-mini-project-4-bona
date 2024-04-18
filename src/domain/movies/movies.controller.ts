@@ -4,7 +4,7 @@ import pool from "../../config/db";
 import { successRes } from "../../common/response";
 import { createNextError } from "../../common/createError";
 
-import { CreateMovieRequest, GetMoviesByIdRequest, GetMoviesRequest } from "./movies.model";
+import { CreateMovieRequest, GetMoviesByIdRequest, GetMoviesRequest, UpdateMovieRequest } from "./movies.model";
 import moviesService from "./movies.service";
 
 const getAll = async (req: Request, res: Response, next: NextFunction) => {
@@ -61,8 +61,27 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
+const update = async (req: Request, res: Response, next: NextFunction) => {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    const updateMovieRequest = req.body as UpdateMovieRequest;
+    const updateMovieResponse = await moviesService.update(connection, updateMovieRequest);
+
+    await successRes(connection, res, {
+      message: "Movies updated successfully",
+      status: 200,
+      data: updateMovieResponse,
+    });
+  } catch (error) {
+    await createNextError(connection, () => next(error));
+  }
+}
+
 export default {
   getAll,
   getById,
-  create
+  create,
+  update
 };

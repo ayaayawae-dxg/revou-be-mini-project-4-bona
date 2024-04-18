@@ -12,6 +12,8 @@ import {
   GetMoviesResponse,
   MoviesByIdRawModel,
   MoviesRawModel,
+  UpdateMovieRequest,
+  UpdateMovieResponse,
 } from "./movies.model";
 import moviesRepository from "./movies.repository";
 
@@ -124,8 +126,28 @@ const create = async (
   return createMovie;
 };
 
+const update = async (
+  connection: PoolConnection,
+  updateMovieRequest: UpdateMovieRequest
+): Promise<UpdateMovieResponse> => {
+  const { id, title } = updateMovieRequest;
+
+  const isTitleDuplicate = await moviesRepository.checkUpdateDuplicateTitle(connection, { title, id });
+  if (isTitleDuplicate) {
+    createError({
+      message: "Movies with same title already registered.",
+      status: 200,
+    });
+  }
+
+  const updateMovie = await moviesRepository.update(connection, updateMovieRequest);
+
+  return updateMovie;
+};
+
 export default {
   get,
   getById,
-  create
+  create,
+  update
 };

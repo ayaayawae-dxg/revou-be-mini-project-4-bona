@@ -2,7 +2,7 @@ import { QueryResult, ResultSetHeader, RowDataPacket } from "mysql2";
 import { PoolConnection } from "mysql2/promise";
 
 import { createError } from "../../common/createError";
-import { CreateMovieRequest, CreateMovieResponse, MoviesByIdRawModel, MoviesModel, MoviesRawModel } from "../movies/movies.model";
+import { CheckUpdateDuplicateTitleModel, CreateMovieRequest, CreateMovieResponse, MoviesByIdRawModel, MoviesModel, MoviesRawModel, UpdateMovieRequest, UpdateMovieResponse } from "../movies/movies.model";
 
 const get = async (connection: PoolConnection): Promise<MoviesRawModel[]> => {
   const query = `
@@ -105,9 +105,60 @@ const checkDuplicateTitle = async (connection: PoolConnection, title: string): P
   return rows.length > 0 ? true : false
 };
 
+const checkUpdateDuplicateTitle = async (connection: PoolConnection, { title, id }: CheckUpdateDuplicateTitleModel): Promise<Boolean> => {
+  const [rows] = await connection.query<RowDataPacket[]>(
+    `SELECT title FROM movies WHERE title = "${title}" AND id <> ${id}`
+  );
+  return rows.length > 0 ? true : false
+};
+
+const update = async (connection: PoolConnection, updateMovie: UpdateMovieRequest): Promise<UpdateMovieResponse> => {
+  const query = `
+    UPDATE movies 
+    SET
+      title = "${updateMovie.title}", 
+      rating = "${updateMovie.rating}", 
+      duration = ${updateMovie.duration}, 
+      synopsis = "${updateMovie.synopsis}"
+    WHERE id = ${updateMovie.id};
+  `;
+  const [rows] = await connection.query<ResultSetHeader>(query);
+  const updatedId = updateMovie.id
+
+  if (rows.affectedRows > 0) {
+    const queryDeleteDirector = `DELETE FROM movies_director_map WHERE movie_id = ${updatedId}`
+    await connection.query<ResultSetHeader>(queryDeleteDirector);
+    const queryCreateDirector = `INSERT INTO movies_director_map (movie_id, director) VALUES ?`;
+    const valueCreateDirector = updateMovie.director.map((director) => {
+      return [updatedId, director];
+    });
+    await connection.query<ResultSetHeader>(queryCreateDirector, [valueCreateDirector]);
+
+    const queryDeleteCast = `DELETE FROM movies_cast_map WHERE movie_id = ${updatedId}`
+    await connection.query<ResultSetHeader>(queryDeleteCast);
+    const queryCreateCast = `INSERT INTO movies_cast_map (movie_id, actor, as_character) VALUES ?`;
+    const valueCreateCast = updateMovie.cast.map((cast) => {
+      return [updatedId, cast.actor, cast.as_character];
+    });
+    await connection.query<ResultSetHeader>(queryCreateCast, [valueCreateCast]);
+
+    const queryDeleteGenre = `DELETE FROM movies_genre_map WHERE movie_id = ${updatedId}`
+    await connection.query<ResultSetHeader>(queryDeleteGenre);
+    const queryCreateGenre = `INSERT INTO movies_genre_map (movie_id, genre) VALUES ?`;
+    const valueCreateGenre = updateMovie.genre.map((genre) => {
+      return [updatedId, genre];
+    });
+    await connection.query<ResultSetHeader>(queryCreateGenre, [valueCreateGenre]);
+  }
+
+  return { id: updateMovie.id };
+};
+
 export default {
   get,
   getDetail,
   create,
-  checkDuplicateTitle
+  checkDuplicateTitle,
+  checkUpdateDuplicateTitle,
+  update
 };

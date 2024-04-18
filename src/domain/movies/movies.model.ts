@@ -59,3 +59,16 @@ export interface CreateMovieRequest {
   cast: MoviesCastModel[];
   genre: string[];
 }
+
+export interface UpdateMovieResponse {
+  id: number;
+}
+
+export interface UpdateMovieRequest extends CreateMovieRequest {
+  id: number;
+}
+
+export interface CheckUpdateDuplicateTitleModel {
+  title: string;
+  id: number;
+}
