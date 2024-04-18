@@ -15,14 +15,16 @@ const getByMovieAndTime = async (connection: PoolConnection, { movie_id, show_ti
 };
 
 const checkSeat = async (connection: PoolConnection, { screening_id, seat_id }: CheckSeatModel): Promise<boolean> => {
+  await connection.query("SELECT id FROM theatres_seat WHERE id IN (?) FOR UPDATE;", [seat_id])
+
   const query = `
-    SELECT od.seat_id from screening s 
+   SELECT od.seat_id from screening s 
     JOIN orders o 
       ON o.screening_id = s.id 
         AND s.id = ?
     JOIN orders_detail od 
       ON od.order_id = o.id 
-        AND od.seat_id IN (?)
+        AND od.seat_id IN (?);
   `;
   const values = [screening_id, seat_id]
   const [rows] = await connection.query<RowDataPacket[]>(query, values);
