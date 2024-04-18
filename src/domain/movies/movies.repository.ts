@@ -11,9 +11,9 @@ const get = async (connection: PoolConnection): Promise<MoviesRawModel[]> => {
         , s.show_time
         , mgm.genre 
       FROM movies m 
-      JOIN screening s 
+      LEFT JOIN screening s 
         ON s.movie_id = m.id
-      JOIN movies_genre_map mgm 
+      LEFT JOIN movies_genre_map mgm 
         ON m.id = mgm.movie_id 
       ORDER BY m.id ASC, s.show_time ASC
   `;
@@ -32,22 +32,25 @@ const get = async (connection: PoolConnection): Promise<MoviesRawModel[]> => {
 
 const getDetail = async (connection: PoolConnection, moviesId: number): Promise<MoviesByIdRawModel[]> => {
   const query = `
+    SELECT 
+      ms.id, ms.title, ms.created_at, ms.rating, ms.duration, ms.synopsis
+      , ms.show_time, mcm.actor, mcm.as_character, mdm.director
+      , mgm.genre 
+    FROM (
       SELECT 
         m.id, m.title, m.created_at, m.rating, m.duration, m.synopsis
         , s.show_time
-        , mcm.actor, mcm.as_character, mdm.director
-        , mgm.genre 
       FROM movies m 
-      JOIN screening s 
-        ON s.movie_id = m.id
-          AND m.id = ${moviesId}
-      JOIN movies_cast_map mcm 
-        ON m.id = mcm.movie_id 
-      JOIN movies_director_map mdm
-        ON m.id = mdm.movie_id 
-      JOIN movies_genre_map mgm 
-        ON m.id = mgm.movie_id 
-      ORDER BY m.id ASC, s.show_time ASC
+      LEFT JOIN screening s ON m.id = s.movie_id
+      WHERE m.id = ${moviesId}
+    ) as ms
+    LEFT JOIN movies_cast_map mcm 
+      ON ms.id = mcm.movie_id 
+    LEFT JOIN movies_director_map mdm
+      ON ms.id = mdm.movie_id 
+    LEFT JOIN movies_genre_map mgm 
+      ON ms.id = mgm.movie_id
+    ORDER BY ms.show_time ASC
   `;
   const [rows] = await connection.query<RowDataPacket[]>(query);
 

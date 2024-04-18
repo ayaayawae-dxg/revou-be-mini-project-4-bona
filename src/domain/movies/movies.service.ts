@@ -42,11 +42,11 @@ const get = async (
         };
       }
 
-      if (!groupedMovies[id].show_time.includes(show_time)) {
+      if (!groupedMovies[id].show_time.includes(show_time) && show_time) {
         groupedMovies[id].show_time.push(show_time);
       }
 
-      if (!groupedMovies[id].genre.includes(genre)) {
+      if (!groupedMovies[id].genre.includes(genre) && genre) {
         groupedMovies[id].genre.push(genre);
       }
     });
@@ -60,12 +60,12 @@ const get = async (
 const getById = async (
   connection: PoolConnection,
   getMoviesByIdRequest: GetMoviesByIdRequest
-): Promise<GetMoviesByIdResponse[]> => {
+): Promise<GetMoviesByIdResponse> => {
   const { movieId } = getMoviesByIdRequest;
 
   const moviesData = await moviesRepository.getDetail(connection, movieId);
 
-  const restructureData = (movies: MoviesByIdRawModel[]): GetMoviesByIdResponse[] => {
+  const restructureData = (movies: MoviesByIdRawModel[]): GetMoviesByIdResponse => {
     const groupedMovies: { [key: number]: GetMoviesByIdResponse } = {};
 
     movies.forEach((movie) => {
@@ -85,24 +85,27 @@ const getById = async (
         };
       }
 
-      if (!groupedMovies[id].show_time.includes(show_time)) {
+      if (!groupedMovies[id].show_time.includes(show_time) && show_time) {
         groupedMovies[id].show_time.push(show_time);
       }
 
-      if (!groupedMovies[id].director.includes(director)) {
+      if (!groupedMovies[id].director.includes(director) && director) {
         groupedMovies[id].director.push(director);
       }
 
-      if (!groupedMovies[id].genre.includes(genre)) {
+      if (!groupedMovies[id].genre.includes(genre) && genre) {
         groupedMovies[id].genre.push(genre);
       }
 
-      if (!groupedMovies[id].cast.find(v => v.actor === actor && v.as_character === as_character)) {
+      if (
+        !groupedMovies[id].cast.find(v => v.actor === actor && v.as_character === as_character)
+        && (actor || as_character)
+      ) {
         groupedMovies[id].cast.push({ actor, as_character });
       }
     });
 
-    return Object.values(groupedMovies);
+    return Object.values(groupedMovies)[0];
   };
 
   return restructureData(moviesData);
