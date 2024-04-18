@@ -91,6 +91,14 @@ paths:
           application/json:
             schema:
               type: object
+              required: 
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
               example:
                 username: user1
                 password: "12345"
@@ -98,7 +106,15 @@ paths:
         "200":
           description: Successful response
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  status: 200
+                  message: "Login successfully"
+                  data:
+                    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZnVsbG5hbWUiOiJ1c2VyMyIsInVzZXJuYW1lIjoidXNlcjMiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcxMzQzOTY0MSwiZXhwIjoxNzEzNTI2MDQxfQ._2pezvZVrOJ704gBDBXGOu8WNoj27L3B7ayeFClBagA
   /movies/:
     get:
       tags:
