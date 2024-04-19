@@ -17,13 +17,13 @@ app.use(express.json());
 app.use(express.text());
 app.use(express.urlencoded({ extended: false }));
 app.use(log);
-// app.use(
-//   OpenApiValidator.middleware({
-//     apiSpec,
-//     validateRequests: true, // (default)
-//     validateResponses: true, // false by default
-//   }),
-// );
+app.use(
+  OpenApiValidator.middleware({
+    apiSpec,
+    validateRequests: true, // (default)
+    validateResponses: true, // false by default
+  }),
+);
 app.use('/spec', express.static(apiSpec));
 
 app.use("/", routes);
