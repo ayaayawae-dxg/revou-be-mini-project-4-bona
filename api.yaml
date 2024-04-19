@@ -36,7 +36,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: 
+              required:
                 - username
                 - password
                 - fullname
@@ -50,7 +50,7 @@ paths:
                   type: string
                 role:
                   type: string
-                  enum: 
+                  enum:
                     - user
                     - admin
               example:
@@ -91,7 +91,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: 
+              required:
                 - username
                 - password
               properties:
@@ -124,7 +124,66 @@ paths:
         "200":
           description: Successful response
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  status: 200
+                  message: Movies fetched successfully
+                  data:
+                    - id: 1
+                      title: Movies 1
+                      duration: 120
+                      show_time:
+                        - "2024-04-15 03:55:00"
+                        - "2024-05-13 03:00:00"
+                        - "2024-05-13 08:30:00"
+                        - "2024-05-13 12:00:00"
+                        - "2024-05-14 04:00:00"
+                        - "2024-05-18 03:00:00"
+                        - "2024-05-18 04:00:00"
+                        - "2024-05-19 05:00:00"
+                        - "2024-05-19 06:00:00"
+                      genre:
+                        - Horror
+                        - Comedy
+                    - id: 2
+                      title: Movies 2
+                      duration: 60
+                      show_time:
+                        - "2024-05-12 23:00:00"
+                        - "2024-05-13 01:00:00"
+                        - "2024-05-13 03:00:00"
+                        - "2024-05-13 05:30:00"
+                        - "2024-05-14 04:00:00"
+                        - "2024-05-18 03:00:00"
+                        - "2024-05-18 04:00:00"
+                        - "2024-05-19 05:00:00"
+                        - "2024-05-19 06:00:00"
+                      genre:
+                        - Romance
+                        - Mystery
+                        - Adventure
+                    - id: 3
+                      title: Movie 2
+                      duration: 120
+                      show_time:
+                        - "2024-05-11 01:00:00"
+                        - "2024-05-11 02:00:00"
+                        - "2024-05-11 03:00:00"
+                        - "2024-05-11 04:00:00"
+                      genre: []
+                    - id: 4
+                      title: Movies 4
+                      duration: 120
+                      show_time: []
+                      genre: []
+                    - id: 5
+                      title: Movies 5
+                      duration: 120
+                      show_time: []
+                      genre: []
     post:
       tags:
         - Movies
@@ -134,6 +193,46 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - duration
+                - rating
+                - synopsis
+                - title
+                - director
+                - cast
+                - genre
+              properties:
+                duration:
+                  type: number
+                rating:
+                  type: string
+                  enum:
+                    - G
+                    - PG
+                    - PG-13
+                    - R
+                    - NC-17
+                synopsis:
+                  type: string
+                title:
+                  type: string
+                director:
+                  type: array
+                  items:
+                    type: string
+                cast:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      actor:
+                        type: string
+                      as_character:
+                        type: string
+                genre:
+                  type: array
+                  items:
+                    type: string
               example:
                 duration: 120
                 rating: PG
@@ -154,29 +253,156 @@ paths:
         - bearerAuth: []
       responses:
         "200":
+          description: Failed response - Duplicate title
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  status:
+                    type: number
+                  message:
+                    type: string
+                example:
+                  success: false
+                  status: 200
+                  message: "Movies with same title already registered."
+        "201":
           description: Successful response
           content:
-            application/json: {}
-  /movies/1:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  status:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                example:
+                  success: true
+                  status: 200
+                  message: "Movies updated successfully"
+                  data:
+                    id: 15
+        "401": 
+          $ref: "#/components/responses/Unauthorized"
+        "403": 
+          $ref: "#/components/responses/Forbidden"
+  /movies/{id}:
     get:
       tags:
         - Movies
       summary: Get By Id
+      parameters:
+        - name: id
+          in: path
+          description: ID of movie to fetch
+          required: true
+          schema:
+            type: integer
       responses:
         "200":
           description: Successful response
           content:
-            application/json: {}
-  /movies/15:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  status: 200
+                  message: Movies detail fetched successfully
+                  data:
+                    id: 1
+                    title: Movies 1
+                    rating: G
+                    duration: 120
+                    synopsis: Synopsis 1
+                    show_time:
+                      - "2024-04-15 03:55:00"
+                      - "2024-05-13 03:00:00"
+                      - "2024-05-13 08:30:00"
+                      - "2024-05-13 12:00:00"
+                      - "2024-05-14 04:00:00"
+                      - "2024-05-18 03:00:00"
+                      - "2024-05-18 04:00:00"
+                      - "2024-05-19 05:00:00"
+                      - "2024-05-19 06:00:00"
+                    cast:
+                      - actor: Actor 1
+                        as_character: Character A
+                      - actor: Actor 2
+                        as_character: Character B
+                    director:
+                      - Director 1
+                    genre:
+                      - Horror
+                      - Comedy
     put:
       tags:
         - Movies
       summary: Update Movie
+      parameters:
+        - name: id
+          in: path
+          description: ID of movie to update
+          required: true
+          schema:
+            type: integer
       requestBody:
         content:
           application/json:
             schema:
               type: object
+              required:
+                - id
+                - duration
+                - rating
+                - synopsis
+                - title
+                - director
+                - cast
+                - genre
+              properties:
+                id:
+                  type: number
+                duration:
+                  type: number
+                rating:
+                  type: string
+                  enum:
+                    - G
+                    - PG
+                    - PG-13
+                    - R
+                    - NC-17
+                synopsis:
+                  type: string
+                title:
+                  type: string
+                director:
+                  type: array
+                  items:
+                    type: string
+                cast:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      actor:
+                        type: string
+                      as_character:
+                        type: string
+                genre:
+                  type: array
+                  items:
+                    type: string
               example:
                 id: 15
                 duration: 75
@@ -200,8 +426,38 @@ paths:
         "200":
           description: Successful response
           content:
-            application/json: {}
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  status:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                example:
+                  success: true
+                  status: 200
+                  message: "Movies updated successfully"
+                  data:
+                    id: 15
+        "401": 
+          $ref: "#/components/responses/Unauthorized"
+        "403": 
+          $ref: "#/components/responses/Forbidden"
     delete:
+      parameters:
+        - name: id
+          in: path
+          description: ID of movie to delete
+          required: true
+          schema:
+            type: integer
       tags:
         - Movies
       summary: Delete
@@ -211,7 +467,24 @@ paths:
         "200":
           description: Successful response
           content:
-            application/json: {}
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  status:
+                    type: number
+                  message:
+                    type: string
+                example:
+                  success: true
+                  status: 200
+                  message: "Movies deleted successfully"
+        "401": 
+          $ref: "#/components/responses/Unauthorized"
+        "403": 
+          $ref: "#/components/responses/Forbidden"
+          
   /orders:
     post:
       tags:
@@ -297,3 +570,31 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+
+  responses:
+    Unauthorized:
+      description: Unauthorized response
+      content:
+        application/json:
+          schema:
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+            example:
+              success: false
+              message: "invalid signature"
+    Forbidden: 
+      description: Forbidden response
+      content:
+        application/json:
+          schema:
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+            example:
+              success: false
+              message: "You are not allowed"
