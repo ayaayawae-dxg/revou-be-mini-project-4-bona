@@ -287,13 +287,13 @@ paths:
                         type: number
                 example:
                   success: true
-                  status: 200
-                  message: "Movies updated successfully"
+                  status: 201
+                  message: "Movies created successfully"
                   data:
                     id: 15
-        "401": 
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        "403": 
+        "403":
           $ref: "#/components/responses/Forbidden"
   /movies/{id}:
     get:
@@ -446,9 +446,9 @@ paths:
                   message: "Movies updated successfully"
                   data:
                     id: 15
-        "401": 
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        "403": 
+        "403":
           $ref: "#/components/responses/Forbidden"
     delete:
       parameters:
@@ -480,11 +480,10 @@ paths:
                   success: true
                   status: 200
                   message: "Movies deleted successfully"
-        "401": 
+        "401":
           $ref: "#/components/responses/Unauthorized"
-        "403": 
+        "403":
           $ref: "#/components/responses/Forbidden"
-          
   /orders:
     post:
       tags:
@@ -495,18 +494,65 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - movie_id
+                - show_time
+                - seat_id
+              properties:
+                movie_id:
+                  type: number
+                show_time:
+                  type: string
+                seat_id:
+                  type: array
+                  items:
+                    type: number
               example:
                 movie_id: 1
                 show_time: "2024-05-13 03:00:00"
                 seat_id:
                   - 1
+                  - 2
       security:
         - bearerAuth: []
       responses:
         "200":
+          description: Failed response - Duplicate Seat
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  status:
+                    type: number
+                  message:
+                    type: string
+                example:
+                  success: false
+                  status: 200
+                  message: "Seat is already filled. Please choose another seat."
+        "201":
           description: Successful response
           content:
-            application/json: {}
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  status:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
   /orders/history:
     get:
       tags:
@@ -518,7 +564,51 @@ paths:
         "200":
           description: Successful response
           content:
-            application/json: {}
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  status: 200
+                  message: Order history fetched successfully
+                  data:
+                    - id: 19e6e582-02a0-404a-a42d-232943123f7b
+                      seat:
+                        - id: 9
+                          seat: A1
+                      show_time: "2024-05-12 23:00:00"
+                      status: READY
+                      title: Movies 2
+                    - id: 1dd74a9f-b552-4850-97b9-561d40bcb9d6
+                      seat:
+                        - id: 1
+                          seat: A1
+                      show_time: "2024-05-12 23:00:00"
+                      status: READY
+                      title: Movies 2
+                    - id: 395267e2-ec84-45b4-a20c-c8874e3f3789
+                      seat:
+                        - id: 2
+                          seat: A2
+                      show_time: "2024-05-19 06:00:00"
+                      status: READY
+                      title: Movies 2
+                    - id: 3a1791ea-0a0c-4161-aaa4-9e5aa0a53362
+                      seat:
+                        - id: 8
+                          seat: B4
+                      show_time: "2024-05-12 23:00:00"
+                      status: READY
+                      title: Movies 2
+                    - id: 439b8c0b-76ba-4d9d-b282-df17109586f2
+                      seat:
+                        - id: 4
+                          seat: A4
+                      show_time: "2024-05-12 23:00:00"
+                      status: READY
+                      title: Movies 2
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /screening:
     post:
       tags:
@@ -585,7 +675,7 @@ components:
             example:
               success: false
               message: "invalid signature"
-    Forbidden: 
+    Forbidden:
       description: Forbidden response
       content:
         application/json:
