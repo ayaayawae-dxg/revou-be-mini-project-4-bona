@@ -4,13 +4,13 @@ import config from "../../config/config";
 import { createError } from "../../common/createError";
 
 import { CreateScreeningRequest, CreateScreeningResponse } from "./screening.model";
-import moviesRepository from "./screening.repository";
+import screeningRepository from "./screening.repository";
 
 const create = async (
   connection: PoolConnection,
   createScreeningRequest: CreateScreeningRequest
 ): Promise<void> => {
-  const createMovie = await moviesRepository.create(connection, createScreeningRequest);
+  const createMovie = await screeningRepository.create(connection, createScreeningRequest);
 };
 
 export default {

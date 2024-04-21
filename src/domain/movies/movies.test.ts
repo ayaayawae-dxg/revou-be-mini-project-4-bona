@@ -204,6 +204,7 @@ describe("movies service", () => {
       const deleteMovieRequest = { movieId: 1 };
 
       (moviesRepository.remove as jest.Mock).mockResolvedValueOnce(null);
+      
       await moviesService.remove(connection, deleteMovieRequest);
       expect(moviesRepository.remove).toHaveBeenCalledWith(connection, 1);
     });
