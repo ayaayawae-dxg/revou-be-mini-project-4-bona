@@ -4,7 +4,11 @@ package-lock.json
 *.log
 *.gz
 
+# build
 /dist
+
+# testing
+/coverage
 
 # should add .env
 # .env 
