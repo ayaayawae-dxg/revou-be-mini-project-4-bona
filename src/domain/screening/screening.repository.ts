@@ -44,7 +44,7 @@ const create = async (connection: PoolConnection, createScreeningRequest: Create
   const [rows] = await connection.query<ResultSetHeader>(query, [values]);
 };
 
-const checkdDuplicateShowtime = async (connection: PoolConnection, createScreeningRequest: CreateScreeningRequest): Promise<boolean> => {
+const checkDuplicateShowtime = async (connection: PoolConnection, createScreeningRequest: CreateScreeningRequest): Promise<boolean> => {
   const { movie_id, theatre_id, show_time } = createScreeningRequest;
   const query = `
     select show_time 
@@ -61,5 +61,5 @@ export default {
   getByMovieAndTime,
   checkSeat,
   create,
-  checkdDuplicateShowtime
+  checkDuplicateShowtime
 };

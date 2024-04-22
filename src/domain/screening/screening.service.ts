@@ -10,7 +10,7 @@ const create = async (
   connection: PoolConnection,
   createScreeningRequest: CreateScreeningRequest
 ): Promise<void> => {
-  const isShowTimeDuplicate = await screeningRepository.checkdDuplicateShowtime(connection, createScreeningRequest);
+  const isShowTimeDuplicate = await screeningRepository.checkDuplicateShowtime(connection, createScreeningRequest);
   if (isShowTimeDuplicate) {
     createError({
       message: "Duplicate show time",
