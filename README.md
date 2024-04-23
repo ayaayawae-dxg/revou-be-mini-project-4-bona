@@ -21,6 +21,16 @@ An API for Movie Ticket Booking
 
 ## API
 
-For more details, open api.yaml file
+For more details, open [api.yaml](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/api.yaml) file
 
 ![image](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/assets/156976045/30607c61-e222-418e-9abe-f3118a9bf75f)
+
+## Database
+### DDL
+File [here](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/database/DDL.sql)
+
+### DML
+File [here](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/database/DML.sql)
+
+### Schema
+![image](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/assets/156976045/c635aedc-ebcd-4618-810f-4c7c5df476ea)
