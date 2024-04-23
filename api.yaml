@@ -3,7 +3,7 @@ info:
   title: BE Mini Project 4 (Movie Ticket Booking)
   version: 1.0.0
 servers:
-  - url: http://{{base_url}}
+  - url: http://localhost:5000
     variables:
       base_url:
         default: localhost:5000

@@ -3,6 +3,7 @@ import express from "express";
 import { RowDataPacket } from "mysql2";
 import * as OpenApiValidator from "express-openapi-validator";
 import path from "path";
+import cors from "cors";
 
 import routes from "./routes";
 import log from "./middleware/log";
@@ -13,6 +14,7 @@ import config from "./config/config";
 const app = express();
 const apiSpec = path.join(__dirname, '../api.yaml');
 
+app.use(cors())
 app.use(express.json());
 app.use(express.text());
 app.use(express.urlencoded({ extended: false }));
