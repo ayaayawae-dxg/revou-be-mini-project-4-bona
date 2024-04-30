@@ -1,3 +1,5 @@
+use be-mini-project-4;
+
 -- MOVIES
 INSERT INTO movies (id, title, rating, duration, synopsis) VALUES (1, "Movies 1", "G", 120, "Synopsis 1");
 INSERT INTO movies (id, title, rating, duration, synopsis) VALUES (2, "Movies 2", "PG", 60, "Synopsis 2");
