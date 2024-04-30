@@ -20,6 +20,7 @@ services:
       - ./database:/docker-entrypoint-initdb.d
 
   app:
+    # Will run after mysqldb healthcheck = service_healthy
     depends_on:
       mysqldb :
         condition: service_healthy

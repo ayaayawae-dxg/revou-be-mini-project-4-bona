@@ -1,4 +1,4 @@
-# Mini Project Assignment: Building a Movie Ticket Booking RESTful API with Authentication and Authorization using TypeScript and Express.js
+# Mini Project + Milestone Assignment: Building a Movie Ticket Booking RESTful API with Authentication and Authorization using TypeScript and Express.js
 
 ## Description
 
@@ -12,21 +12,47 @@ An API for Movie Ticket Booking
 5. [jwt](https://www.npmjs.com/package/jsonwebtoken)
 5. [mysql2](https://www.npmjs.com/package/mysql2)
 
-## How to run
-1. Clone this repository
-2. Install dependency with `npm i`
-3. Run `npm run dev`
+## How to run (with Docker)
+1. Clone this repository.
+2. Open project folder.
+3. Type this on the Command Prompt.
+	```
+	docker compose up
+	```
+	This will generate a docker image and run a container that contain a MySQL container with DML & DDL data, and the server application container.
+4. Wait until process completed, and the log showing :
+	```properties
+	app-1      | Database connected successfully
+	app-1      | Server is running on 0.0.0.0:5000
+	```
+	If there is an error, it occurs because the server is already running while the DB is not done processing.
+
+## Docker
+1. [Server Dockerfile](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/Dockerfile)  
+This file is used to create a docker image for the server application.
+2. [Docker Compose file](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/docker-compose.yml)  
+This file is used to run docker image from `Server Dockerfile` and `MySQL` image for the database. 
+
 
 ## API
 For more details, open [api.yaml](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/api.yaml) file
 
 ![image](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/assets/156976045/30607c61-e222-418e-9abe-f3118a9bf75f)
 
+## Postman
+### Collection [here](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/postman/collection.json)
+Collection is used to list all API used in the application.  
+Using `/auth/login` with correct credential, will automatically set generated token from response, to enviroment variables `token`.
+
+### Environment [here](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/postman/environment.json)
+Environment is used to define variables that used in the API Collection
+
 ## Database
-### DDL
-File [here](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/database/DDL.sql)
+### DDL [here](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/database/DDL.sql)
 
 ```sql
+use be-mini-project-4;
+
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(32) UNIQUE,
@@ -117,10 +143,11 @@ CREATE TABLE orders_detail (
 );
 ```
 
-### DML
-File [here](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/database/DML.sql)
+### DML [here](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/database/DML.sql)
 
 ```sql
+use be-mini-project-4;
+
 -- MOVIES
 INSERT INTO movies (id, title, rating, duration, synopsis) VALUES (1, "Movies 1", "G", 120, "Synopsis 1");
 INSERT INTO movies (id, title, rating, duration, synopsis) VALUES (2, "Movies 2", "PG", 60, "Synopsis 2");
