@@ -19,8 +19,8 @@ An API for Movie Ticket Booking
 	```
 	docker compose up
 	```
-	This will generate a docker image and run a container that contain a MySQL container with DML & DDL data, and the server application container.
-4. Wait until process completed, and the log showing :
+	This will generate a docker image and run a container that contains a MySQL database with DML & DDL data, and the server application.
+4. Wait until process completed and the log showing :
 	```properties
 	app-1      | Database connected successfully
 	app-1      | Server is running on 0.0.0.0:5000
