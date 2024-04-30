@@ -5,7 +5,6 @@
 An API for Movie Ticket Booking
 
 ## Library
-
 1. [typescript](https://www.npmjs.com/package/typescript)
 2. [express](https://www.npmjs.com/package/express)
 3. [bcrypt](https://www.npmjs.com/package/bcrypt)
@@ -14,13 +13,11 @@ An API for Movie Ticket Booking
 5. [mysql2](https://www.npmjs.com/package/mysql2)
 
 ## How to run
-
 1. Clone this repository
 2. Install dependency with `npm i`
 3. Run `npm run dev`
 
 ## API
-
 For more details, open [api.yaml](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/api.yaml) file
 
 ![image](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/assets/156976045/30607c61-e222-418e-9abe-f3118a9bf75f)
@@ -28,6 +25,7 @@ For more details, open [api.yaml](https://github.com/ayaayawae-dxg/revou-be-mini
 ## Database
 ### DDL
 File [here](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/database/DDL.sql)
+
 ```sql
 CREATE TABLE users (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -121,6 +119,7 @@ CREATE TABLE orders_detail (
 
 ### DML
 File [here](https://github.com/ayaayawae-dxg/revou-be-mini-project-4-bona/blob/main/database/DML.sql)
+
 ```sql
 -- MOVIES
 INSERT INTO movies (id, title, rating, duration, synopsis) VALUES (1, "Movies 1", "G", 120, "Synopsis 1");
